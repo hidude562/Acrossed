@@ -103,9 +103,9 @@ class Trie {
     }
 
     // Function to get the list of letters following the prefix, sorted by occurrence
-    public List<CharacterCountPair> getLettersByOccurrence(String prefix) {
+    public ArrayList<CharacterCountPair> getLettersByOccurrence(String prefix) {
         TrieNode current = root;
-        List<CharacterCountPair> letters = new ArrayList<>();
+        ArrayList<CharacterCountPair> letters = new ArrayList<>();
 
         // Navigate to the end of the prefix
         for (int i = 0; i < prefix.length(); i++) {
@@ -146,10 +146,10 @@ class Trie {
     }
 
     // Method to find the characters with the highest minimum occurrence between two prefixes
-    public List<CharacterCountPair> getHighestMinimumOccurrences(String prefix1, String prefix2) {
+    public ArrayList<CharacterCountPair> getHighestMinimumOccurrences(String prefix1, String prefix2) {
         // Get the lists of letters by occurrence for both prefixes
-        List<CharacterCountPair> list1 = getLettersByOccurrence(prefix1);
-        List<CharacterCountPair> list2 = getLettersByOccurrence(prefix2);
+        ArrayList<CharacterCountPair> list1 = getLettersByOccurrence(prefix1);
+        ArrayList<CharacterCountPair> list2 = getLettersByOccurrence(prefix2);
 
         // Create maps to store the counts for quick lookup
         Map<java.lang.Character, Integer> counts1 = new HashMap<>();
@@ -162,7 +162,7 @@ class Trie {
         }
 
         // Find the characters with the highest minimum occurrence
-        List<CharacterCountPair> result = new ArrayList<>();
+        ArrayList<CharacterCountPair> result = new ArrayList<>();
         for (java.lang.Character c : counts1.keySet()) {
             if (counts2.containsKey(c)) {
                 int minCount = Math.min(counts1.get(c), counts2.get(c));
