@@ -17,6 +17,11 @@ public class Crossword {
         */
 
         crossword = new Character[5][5];
+        try {
+            crossword[0][0].setCharacter((char) 60);
+        } catch(Exception e) {
+
+        }
     }
 
     private ArrayList<Character> getIterationSequence() {
@@ -53,7 +58,33 @@ public class Crossword {
         return iterations;
     }
 
+    public String[] getWordsAtPos(int x, int y) {
+        String[] words = new String[2];
+
+        String word = "";
+
+        for(int x2 = 0; x2 < crossword.length; x2++) {
+            word += crossword[y][x2].getCharacter();
+        }
+
+        words[0] = word;
+
+        word = "";
+
+        for(int y2 = 0; y2 < crossword.length; y2++) {
+            word += crossword[y2][x].getCharacter();
+        }
+
+        words[1] = word;
+
+        return words;
+    }
+
     public void generate() {
         ArrayList<Character> iterations = getIterationSequence();
+
+        for(var i = 0; i < iterations.size(); i++) {
+
+        }
     }
 }

@@ -6,6 +6,7 @@ public class Character {
     public Character(boolean blocked) {
         this.isOccupied = blocked;
         this.isBlocked = blocked;
+        this.character = "".toCharArray()[0];
     }
 
     public void setCharacter (char character) throws IllegalAccessException {
@@ -25,6 +26,8 @@ public class Character {
     }
 
     public char getCharacter() {
+        if(isBlocked)
+            return "".toCharArray()[0];
         return character;
     }
 
