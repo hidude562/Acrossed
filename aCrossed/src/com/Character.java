@@ -6,7 +6,13 @@ public class Character {
     public Character(boolean blocked) {
         this.isOccupied = blocked;
         this.isBlocked = blocked;
-        this.character = "".toCharArray()[0];
+        this.character = (char) 0;
+    }
+
+    public Character(boolean blocked, char character) {
+        this.isOccupied = blocked;
+        this.isBlocked = blocked;
+        this.character = character;
     }
 
     public void setCharacter (char character) throws IllegalAccessException {
@@ -21,13 +27,23 @@ public class Character {
         return isBlocked;
     }
 
+    public void setIsBlocked(boolean value) {
+        isBlocked = value;
+    }
+
+    public void clear() {
+        this.character = (char) 0;
+        this.isOccupied = false;
+        this.isBlocked = false;
+    }
+
     public boolean getIsOccupied() {
         return isOccupied;
     }
 
     public char getCharacter() {
         if(isBlocked)
-            return "".toCharArray()[0];
+            return (char) 0;
         return character;
     }
 
