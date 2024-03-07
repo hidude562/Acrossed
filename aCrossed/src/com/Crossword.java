@@ -34,6 +34,7 @@ public class Crossword {
             }
         }
         try {
+
             crossword[0][0].setIsBlocked(true);
             crossword[crossword.length - 1][crossword[0].length - 1].setIsBlocked(true);
 
@@ -86,28 +87,49 @@ public class Crossword {
         return iterations;
     }
 
-    public String[] getWordsAtPos(int x, int y) {
-        String[] words = new String[2];
+    public Word[] getWordsAtPos(int x, int y) {
+        Word[] words = new Word[2];
 
-        String word = "";
+        /*
+        TODO: when i implement crossword maps with non-uniform maps or whatever
+        This will need to start at the character
+        then go one left, append at beggining
+        go to right 2, append at end
+        and then do this until one word barrier is met
+        then go as far as before to the otherside then yea
 
-        for(int x2 = 0; x2 < crossword.length; x2++) {
-            char character = crossword[y][x2].getCharacter();
-            if((int) character != 0)
-                word += character;
+        this should also be faster since it goes like the minimum cells
+        */
+        {
+            String word = "";
+            int wordLen = 0;
+            for (int x2 = 0; x2 < crossword.length; x2++) {
+                char character = crossword[y][x2].getCharacter();
+                boolean isBlocked = crossword[y][x2].getIsBlocked();
+                if(!isBlocked)
+                    wordLen++;
+
+                if ((int) character != 0)
+                    word += character;
+            }
+
+            words[0] = new Word(word, wordLen);
         }
+        {
+            String word = "";
+            int wordLen = 0;
+            for (int y2 = 0; y2 < crossword.length; y2++) {
+                char character = crossword[y2][x].getCharacter();
+                boolean isBlocked = crossword[y2][x].getIsBlocked();
+                if(!isBlocked)
+                    wordLen++;
 
-        words[0] = word;
+                if ((int) character != 0)
+                    word += character;
+            }
 
-        word = "";
-
-        for(int y2 = 0; y2 < crossword.length; y2++) {
-            char character = crossword[y2][x].getCharacter();
-            if((int) character != 0)
-                word += character;
+            words[1] = new Word(word, wordLen);
         }
-
-        words[1] = word;
 
         return words;
     }
@@ -122,7 +144,7 @@ public class Crossword {
             // In theory, with this algorithm, you will never need the right and down positions
             // Because it only expands one way
             if(!crossword[iterations.get(i).y][iterations.get(i).x].getIsBlocked()) {
-                String[] words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
+                Word[] words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
                 // TODO: work with cases of only one word intersection
 
                 ArrayList<Trie.CharacterCountPair> highestMinOccurrences =
@@ -153,7 +175,6 @@ public class Crossword {
                         }
                     }
                 }
-                System.out.println(this);
 
             }
 

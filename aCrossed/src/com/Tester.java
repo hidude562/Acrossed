@@ -3,5 +3,6 @@ public class Tester {
         Crossword crossword = new Crossword();
         System.out.println(crossword);
         crossword.generate();
+        System.out.println(crossword);
     }
 }

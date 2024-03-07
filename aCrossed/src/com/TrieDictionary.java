@@ -8,45 +8,58 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 class TrieNode {
-    TrieNode[] children = new TrieNode[26]; // Assuming only lowercase English letters
+    TrieNode[] children;
     boolean isEndOfWord;
-    int wordCount; // Number of words in the subtree rooted at this node
+    int wordCount;
 
-    public TrieNode() {
+    public TrieNode(int alphabetSize) {
+        children = new TrieNode[alphabetSize];
         isEndOfWord = false;
         wordCount = 0;
-        for (int i = 0; i < 26; i++) {
-            children[i] = null;
-        }
     }
 }
 
 class Trie {
     private TrieNode root;
+    private final int maxWordLength; // Define the maximum word length the trie will support
 
-    public Trie() {
-        root = new TrieNode();
+    public Trie(int maxWordLength) {
+        this.maxWordLength = maxWordLength;
+        root = new TrieNode(maxWordLength + 1); // +1 to accommodate 0-indexing
     }
 
     // Function to insert a word into the trie
     public void insert(String word) {
-        TrieNode current = root;
+        if (word.length() >= maxWordLength) {
+            throw new IllegalArgumentException("Word exceeds maximum allowed length.");
+        }
+        TrieNode current = root.children[word.length()];
+        if (current == null) {
+            current = new TrieNode(26); // Assuming only lowercase English letters
+            root.children[word.length()] = current;
+        }
+
+        // Increment the word count for the length node
+        current.wordCount++;
         for (int i = 0; i < word.length(); i++) {
             int index = word.charAt(i) - 'a';
             if (current.children[index] == null) {
-                current.children[index] = new TrieNode();
+                current.children[index] = new TrieNode(26);
             }
             current = current.children[index];
             current.wordCount++; // Increment the word count for each node in the path
         }
+
         current.isEndOfWord = true;
     }
 
+
+
     // Function to check if a word is present in the trie
-    public boolean search(String word) {
-        TrieNode current = root;
-        for (int i = 0; i < word.length(); i++) {
-            int index = word.charAt(i) - 'a';
+    public boolean search(Word word) {
+        TrieNode current = root.children[word.value.length()];
+        for (int i = 0; i < word.value.length(); i++) {
+            int index = word.value.charAt(i) - 'a';
             if (current.children[index] == null) {
                 return false;
             }
@@ -56,13 +69,13 @@ class Trie {
     }
 
     // Function to collect all words in the trie that start with the given prefix
-    public List<String> findWordsWithPrefix(String prefix) {
+    public List<String> findWordsWithPrefix(Word prefix) {
         List<String> results = new ArrayList<>();
-        TrieNode current = root;
+        TrieNode current = root.children[prefix.length];
 
         // Navigate to the end of the prefix
-        for (int i = 0; i < prefix.length(); i++) {
-            int index = prefix.charAt(i) - 'a';
+        for (int i = 0; i < prefix.value.length(); i++) {
+            int index = prefix.value.charAt(i) - 'a';
             if (current.children[index] == null) {
                 return results; // No words with the given prefix
             }
@@ -70,15 +83,15 @@ class Trie {
         }
 
         // Perform DFS to collect all words starting with the prefix
-        dfs(current, new StringBuilder(prefix), results);
+        dfs(current, new StringBuilder(prefix.value), results);
         return results;
     }
 
     // Function to get the number of words with the given prefix
-    public int countWordsWithPrefix(String prefix) {
-        TrieNode current = root;
-        for (int i = 0; i < prefix.length(); i++) {
-            int index = prefix.charAt(i) - 'a';
+    public int countWordsWithPrefix(Word prefix) {
+        TrieNode current = root.children[prefix.length];
+        for (int i = 0; i < prefix.value.length(); i++) {
+            int index = prefix.value.charAt(i) - 'a';
             if (current.children[index] == null) {
                 return 0; // No words with the given prefix
             }
@@ -103,13 +116,13 @@ class Trie {
     }
 
     // Function to get the list of letters following the prefix, sorted by occurrence
-    public ArrayList<CharacterCountPair> getLettersByOccurrence(String prefix) {
-        TrieNode current = root;
+    public ArrayList<CharacterCountPair> getLettersByOccurrence(Word prefix) {
+        TrieNode current = root.children[prefix.length];;
         ArrayList<CharacterCountPair> letters = new ArrayList<>();
 
         // Navigate to the end of the prefix
-        for (int i = 0; i < prefix.length(); i++) {
-            int index = prefix.charAt(i) - 'a';
+        for (int i = 0; i < prefix.value.length(); i++) {
+            int index = prefix.value.charAt(i) - 'a';
             if (current.children[index] == null) {
                 return letters; // No words with the given prefix
             }
@@ -146,7 +159,7 @@ class Trie {
     }
 
     // Method to find the characters with the highest minimum occurrence between two prefixes
-    public ArrayList<CharacterCountPair> getHighestMinimumOccurrences(String prefix1, String prefix2) {
+    public ArrayList<CharacterCountPair> getHighestMinimumOccurrences(Word prefix1, Word prefix2) {
         // Get the lists of letters by occurrence for both prefixes
         ArrayList<CharacterCountPair> list1 = getLettersByOccurrence(prefix1);
         ArrayList<CharacterCountPair> list2 = getLettersByOccurrence(prefix2);
@@ -180,7 +193,7 @@ class Trie {
 public class TrieDictionary {
     public Trie trie;
     public TrieDictionary() {
-        this.trie = new Trie();
+        this.trie = new Trie(30);
         String fileName = "dictionary.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -192,13 +205,5 @@ public class TrieDictionary {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        /*
-        // Find and print the characters with the highest minimum occurrence between two prefixes
-        List<Trie.CharacterCountPair> highestMinOccurrences = trie.getHighestMinimumOccurrences("n", "a"); // Replace with any prefixes
-        for (Trie.CharacterCountPair pair : highestMinOccurrences) {
-            System.out.println(pair); // Each pair is in the format 'letter:count'
-        }
-        */
     }
 }
