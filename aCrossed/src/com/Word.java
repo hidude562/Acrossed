@@ -5,4 +5,7 @@ public class Word {
         this.value = value;
         this.length = length;
     }
+    public String toString() {
+        return value + " : " + length;
+    }
 }

@@ -15,7 +15,7 @@ public class Crossword {
     private Character[][] crossword;
     private TrieDictionary dictionary;
 
-    public Crossword() {
+    public Crossword(int size) {
         /*
         Typical NYT 5x5 crossword configuration by default
 
@@ -27,7 +27,7 @@ public class Crossword {
 
         */
 
-        crossword = new Character[5][5];
+        crossword = new Character[size][size];
         for(int y = 0; y < crossword.length; y++) {
             for(int x = 0; x < crossword[0].length; x++) {
                 crossword[y][x] = new Character(false);
@@ -37,9 +37,11 @@ public class Crossword {
 
             crossword[0][0].setIsBlocked(true);
             crossword[crossword.length - 1][crossword[0].length - 1].setIsBlocked(true);
+            crossword[crossword.length - 1][0].setIsBlocked(true);
+            crossword[0][crossword[0].length - 1].setIsBlocked(true);
 
-            crossword[1][0].setCharacter((char) 97);
-            crossword[0][1].setCharacter((char) 98);
+            //crossword[1][0].setCharacter((char) 104);
+            //crossword[0][1].setCharacter((char) 108);
 
             /*
             crossword[1][0].setCharacter((char) 98);
@@ -109,7 +111,7 @@ public class Crossword {
                 if(!isBlocked)
                     wordLen++;
 
-                if ((int) character != 0)
+                if ((int) character != 0 && x2 != x)
                     word += character;
             }
 
@@ -124,7 +126,7 @@ public class Crossword {
                 if(!isBlocked)
                     wordLen++;
 
-                if ((int) character != 0)
+                if ((int) character != 0 && y2 != y)
                     word += character;
             }
 
@@ -135,11 +137,13 @@ public class Crossword {
     }
 
     // Generates until success, or failure
-    public boolean generate() {
+    public boolean generate(boolean debug) {
         ArrayList<Point> iterations = getIterationSequence();
 
         // Skip first 3 because they are already set
-        int i = 3;
+        int i = 0;
+        int totalIterations = 0;
+
         while(i < iterations.size()) {
             // In theory, with this algorithm, you will never need the right and down positions
             // Because it only expands one way
@@ -157,6 +161,7 @@ public class Crossword {
                     // If there are  no common word letters, go back until there's one with two
                     Character currentCrosswordItem = crossword[iterations.get(i).y][iterations.get(i).x];
                     int letterChoiceLength = 0;
+
                     while (true) {
                         words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
                         // TODO: work with cases of only one word intersection
@@ -176,6 +181,10 @@ public class Crossword {
                     }
                 }
 
+                if(debug)
+                    System.out.println(this);
+
+                totalIterations++;
             }
 
             i++;
