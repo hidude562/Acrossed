@@ -64,6 +64,7 @@ public class Crossword {
             crossword[10][14].setIsBlocked(true);
 
 
+
             /*
             for(int i = 0; i < 100; i++) {
                 int randX = (int) (Math.random() * 15);
@@ -240,7 +241,7 @@ public class Crossword {
             // Because it only expands one way
             if(!crossword[iterations.get(i).y][iterations.get(i).x].getIsBlocked()) {
                 Word[] words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
-                // TODO: work with cases of only one word intersection
+                System.out.println(words[0] + " - " + words[1]);
 
                 ArrayList<Trie.CharacterCountPair> highestMinOccurrences =
                         dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
@@ -276,7 +277,7 @@ public class Crossword {
                     }
                 }
 
-                if(debug && (totalIterations < 50 || totalIterations % 200 == 0))
+                if(debug && (totalIterations < 500000000 || totalIterations % 200 == 0))
                     System.out.println(this);
 
                 totalIterations++;

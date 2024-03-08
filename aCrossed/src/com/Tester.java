@@ -25,9 +25,12 @@ public class Tester {
 
 
 
+
         /*
         TrieDictionary dictionary = new TrieDictionary();
-        System.out.println(dictionary.trie.getLettersByOccurrence(new Word("",5)));
-        */
+        System.out.println(dictionary.trie.getHighestMinimumOccurrences(new Word("o",2),new Word("a",2)));
+        System.out.println(dictionary.trie.getLettersByOccurrence(new Word("a",2)));
+
+         */
     }
 }

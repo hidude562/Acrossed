@@ -159,8 +159,14 @@ class Trie {
     }
 
     // Method to find the characters with the highest minimum occurrence between two prefixes
+    // Ignores word if length is one for one of them
+    // TODO: Handle cases where the prefix length is one less than word case, and prioritise prefix2 instead
     public ArrayList<CharacterCountPair> getHighestMinimumOccurrences(Word prefix1, Word prefix2) {
         // Get the lists of letters by occurrence for both prefixes
+        if(prefix1.length == 1)
+            return getLettersByOccurrence(prefix2);
+        if(prefix2.length == 1)
+            return getLettersByOccurrence(prefix1);
         ArrayList<CharacterCountPair> list1 = getLettersByOccurrence(prefix1);
         ArrayList<CharacterCountPair> list2 = getLettersByOccurrence(prefix2);
 
