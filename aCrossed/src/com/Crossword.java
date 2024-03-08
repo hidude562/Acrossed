@@ -36,18 +36,13 @@ public class Crossword {
         try {
 
             crossword[0][0].setIsBlocked(true);
+            crossword[2][2].setIsBlocked(true);
+            //crossword[1][4].setIsBlocked(true);
             crossword[crossword.length - 1][crossword[0].length - 1].setIsBlocked(true);
-            crossword[crossword.length - 1][0].setIsBlocked(true);
-            crossword[0][crossword[0].length - 1].setIsBlocked(true);
 
-            //crossword[1][0].setCharacter((char) 104);
-            //crossword[0][1].setCharacter((char) 108);
 
-            /*
-            crossword[1][0].setCharacter((char) 98);
-            crossword[2][0].setCharacter((char) 99);
-            crossword[3][0].setCharacter((char) 100);
-            */
+            crossword[1][0].setCharacter((char) 104);
+            crossword[0][1].setCharacter((char) 108);
         } catch(Exception e) {
 
         }
@@ -93,7 +88,6 @@ public class Crossword {
         Word[] words = new Word[2];
 
         /*
-        TODO: when i implement crossword maps with non-uniform maps or whatever
         This will need to start at the character
         then go one left, append at beggining
         go to right 2, append at end
@@ -104,30 +98,84 @@ public class Crossword {
         */
         {
             String word = "";
-            int wordLen = 0;
-            for (int x2 = 0; x2 < crossword.length; x2++) {
-                char character = crossword[y][x2].getCharacter();
-                boolean isBlocked = crossword[y][x2].getIsBlocked();
-                if(!isBlocked)
-                    wordLen++;
+            int leftOffset = 0;
+            int rightOffset = 0;
+            int wordLen = 1;
+            boolean canMoveLeft = true;
+            boolean canMoveRight = true;
 
-                if ((int) character != 0 && x2 != x)
-                    word += character;
+            while (canMoveLeft || canMoveRight) {
+                // Move left
+                if (canMoveLeft) {
+                    int newX = x - leftOffset - 1;
+                    if (newX >= 0 && !crossword[y][newX].getIsBlocked()) {
+                        char character = crossword[y][newX].getCharacter();
+                        if (character != 0) {
+                            word = character + word;
+                        }
+                        wordLen++;
+                        leftOffset++;
+                    } else {
+                        canMoveLeft = false;
+                    }
+                }
+
+                // Move right
+                if (canMoveRight) {
+                    int newX = x + rightOffset + 1;
+                    if (newX < crossword[y].length && !crossword[y][newX].getIsBlocked()) {
+                        char character = crossword[y][newX].getCharacter();
+                        if (character != 0) {
+                            word += character;
+                        }
+                        wordLen++;
+                        rightOffset++;
+                    } else {
+                        canMoveRight = false;
+                    }
+                }
             }
 
             words[0] = new Word(word, wordLen);
         }
         {
             String word = "";
-            int wordLen = 0;
-            for (int y2 = 0; y2 < crossword.length; y2++) {
-                char character = crossword[y2][x].getCharacter();
-                boolean isBlocked = crossword[y2][x].getIsBlocked();
-                if(!isBlocked)
-                    wordLen++;
+            int upOffset = 0;
+            int downOffset = 0;
+            int wordLen = 1;
+            boolean canMoveUp = true;
+            boolean canMoveDown = true;
 
-                if ((int) character != 0 && y2 != y)
-                    word += character;
+            while (canMoveUp || canMoveDown) {
+                // Move left
+                if (canMoveUp) {
+                    int newY = y - upOffset - 1;
+                    if (newY >= 0 && !crossword[newY][x].getIsBlocked()) {
+                        char character = crossword[newY][x].getCharacter();
+                        if (character != 0) {
+                            word = character + word;
+                        }
+                        wordLen++;
+                        upOffset++;
+                    } else {
+                        canMoveUp = false;
+                    }
+                }
+
+                // Move right
+                if (canMoveDown) {
+                    int newY = y + downOffset + 1;
+                    if (newY < crossword.length && !crossword[newY][x].getIsBlocked()) {
+                        char character = crossword[newY][x].getCharacter();
+                        if (character != 0) {
+                            word += character;
+                        }
+                        wordLen++;
+                        downOffset++;
+                    } else {
+                        canMoveDown = false;
+                    }
+                }
             }
 
             words[1] = new Word(word, wordLen);

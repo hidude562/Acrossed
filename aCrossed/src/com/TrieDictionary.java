@@ -117,7 +117,7 @@ class Trie {
 
     // Function to get the list of letters following the prefix, sorted by occurrence
     public ArrayList<CharacterCountPair> getLettersByOccurrence(Word prefix) {
-        TrieNode current = root.children[prefix.length];;
+        TrieNode current = root.children[prefix.length];
         ArrayList<CharacterCountPair> letters = new ArrayList<>();
 
         // Navigate to the end of the prefix
@@ -194,7 +194,7 @@ public class TrieDictionary {
     public Trie trie;
     public TrieDictionary() {
         this.trie = new Trie(30);
-        String fileName = "smallerDictionary.txt";
+        String fileName = "smallDictionary.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
