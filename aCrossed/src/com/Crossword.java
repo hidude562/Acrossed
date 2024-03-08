@@ -35,14 +35,52 @@ public class Crossword {
         }
         try {
 
+            crossword[4][0].setIsBlocked(true);
+            crossword[9][0].setIsBlocked(true);
+            crossword[4][1].setIsBlocked(true);
+            crossword[9][1].setIsBlocked(true);
+            crossword[4][2].setIsBlocked(true);
+            crossword[3][3].setIsBlocked(true);
+            crossword[6][5].setIsBlocked(true);
+            crossword[5][6].setIsBlocked(true);
+            crossword[4][7].setIsBlocked(true);
+            crossword[3][9].setIsBlocked(true);
+            crossword[2][10].setIsBlocked(true);
+            crossword[1][10].setIsBlocked(true);
+            crossword[0][10].setIsBlocked(true);
+            crossword[5][14].setIsBlocked(true);
+            crossword[5][13].setIsBlocked(true);
+
+            crossword[14][4].setIsBlocked(true);
+            crossword[13][4].setIsBlocked(true);
+            crossword[12][4].setIsBlocked(true);
+            crossword[11][5].setIsBlocked(true);
+            crossword[10][7].setIsBlocked(true);
+            crossword[9][8].setIsBlocked(true);
+            crossword[8][9].setIsBlocked(true);
+            crossword[11][11].setIsBlocked(true);
+            crossword[10][12].setIsBlocked(true);
+            crossword[10][13].setIsBlocked(true);
+            crossword[10][14].setIsBlocked(true);
+
+
+            /*
+            for(int i = 0; i < 100; i++) {
+                int randX = (int) (Math.random() * 15);
+                int randY = (int) (Math.random() * 15);
+                if(!crossword[randY][randX].getIsBlocked()) {
+                    crossword[randY][randX].setIsBlocked(true);
+                    //crossword[randY][randX].setCharacter((char) (97 + ((int) (Math.random() * 25))));
+                }
+            }
+             */
+
+            //crossword[1][0].setCharacter((char) 104);
+            //crossword[0][1].setCharacter((char) 108);
+
             crossword[0][0].setIsBlocked(true);
-            crossword[2][2].setIsBlocked(true);
-            //crossword[1][4].setIsBlocked(true);
             crossword[crossword.length - 1][crossword[0].length - 1].setIsBlocked(true);
 
-
-            crossword[1][0].setCharacter((char) 104);
-            crossword[0][1].setCharacter((char) 108);
         } catch(Exception e) {
 
         }
@@ -125,9 +163,11 @@ public class Crossword {
                     int newX = x + rightOffset + 1;
                     if (newX < crossword[y].length && !crossword[y][newX].getIsBlocked()) {
                         char character = crossword[y][newX].getCharacter();
+                        /* There will never be characters to the right
                         if (character != 0) {
                             word += character;
                         }
+                         */
                         wordLen++;
                         rightOffset++;
                     } else {
@@ -147,11 +187,12 @@ public class Crossword {
             boolean canMoveDown = true;
 
             while (canMoveUp || canMoveDown) {
-                // Move left
+                // Move Up
                 if (canMoveUp) {
                     int newY = y - upOffset - 1;
                     if (newY >= 0 && !crossword[newY][x].getIsBlocked()) {
                         char character = crossword[newY][x].getCharacter();
+
                         if (character != 0) {
                             word = character + word;
                         }
@@ -167,9 +208,11 @@ public class Crossword {
                     int newY = y + downOffset + 1;
                     if (newY < crossword.length && !crossword[newY][x].getIsBlocked()) {
                         char character = crossword[newY][x].getCharacter();
+                        /* There will never be characters to the right
                         if (character != 0) {
                             word += character;
                         }
+                        */
                         wordLen++;
                         downOffset++;
                     } else {
@@ -212,24 +255,28 @@ public class Crossword {
 
                     while (true) {
                         words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
+                        //System.out.println(i);
                         // TODO: work with cases of only one word intersection
+                        if(!crossword[iterations.get(i).y][iterations.get(i).x].getIsBlocked()) {
+                            highestMinOccurrences = dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
+                            currentCrosswordItem = crossword[iterations.get(i).y][iterations.get(i).x];
 
-                        highestMinOccurrences = dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
-                        currentCrosswordItem = crossword[iterations.get(i).y][iterations.get(i).x];
+                            letterChoiceLength = highestMinOccurrences.size();
 
-                        letterChoiceLength = highestMinOccurrences.size();
-
-                        if(letterChoiceLength >= currentCrosswordItem.getTryNumber() + 1) {
-                            i--;
-                            break;
+                            if (letterChoiceLength >= currentCrosswordItem.getTryNumber() + 1) {
+                                i--;
+                                break;
+                            } else {
+                                currentCrosswordItem.clear();
+                                i--;
+                            }
                         } else {
-                            currentCrosswordItem.clear();
                             i--;
                         }
                     }
                 }
 
-                if(debug)
+                if(debug && (totalIterations < 50 || totalIterations % 200 == 0))
                     System.out.println(this);
 
                 totalIterations++;
