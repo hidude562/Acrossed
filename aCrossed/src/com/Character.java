@@ -31,6 +31,14 @@ public class Character {
 
     public void setIsBlocked(boolean value) {
         isBlocked = value;
+        isOccupied = isBlocked;
+    }
+    // Reset the characters, but not the try number
+    public void clearOccupation() {
+        if(!this.isBlocked) {
+            this.character = (char) 0;
+            this.isOccupied = false;
+        }
     }
 
     public void clear() {

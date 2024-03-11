@@ -160,7 +160,7 @@ class Trie {
 
     // Method to find the characters with the highest minimum occurrence between two prefixes
     // Ignores word if length is one for one of them
-    // TODO: Handle cases where the prefix length is one less than word case, and prioritise prefix2 instead
+    // TODO: Handle cases where the prefix length is one less than word case, copying over the other prefix as long as it just appears in the first prefix, discount
     public ArrayList<CharacterCountPair> getHighestMinimumOccurrences(Word prefix1, Word prefix2) {
         // Get the lists of letters by occurrence for both prefixes
         if(prefix1.length == 1)
@@ -180,12 +180,23 @@ class Trie {
             counts2.put(pair.character, pair.count);
         }
 
+
+        boolean hasPrefixOneLessThanEnd = (prefix1.length == prefix1.value.length() + 1) || (prefix2.length == prefix2.value.length() + 1);
         // Find the characters with the highest minimum occurrence
         ArrayList<CharacterCountPair> result = new ArrayList<>();
-        for (java.lang.Character c : counts1.keySet()) {
-            if (counts2.containsKey(c)) {
-                int minCount = Math.min(counts1.get(c), counts2.get(c));
-                result.add(new CharacterCountPair(c, minCount));
+        if(hasPrefixOneLessThanEnd) {
+            for (java.lang.Character c : counts1.keySet()) {
+                if (counts2.containsKey(c)) {
+                    int minCount = Math.max(counts1.get(c), counts2.get(c));
+                    result.add(new CharacterCountPair(c, minCount));
+                }
+            }
+        } else {
+            for (java.lang.Character c : counts1.keySet()) {
+                if (counts2.containsKey(c)) {
+                    int minCount = Math.min(counts1.get(c), counts2.get(c));
+                    result.add(new CharacterCountPair(c, minCount));
+                }
             }
         }
 
@@ -199,8 +210,8 @@ class Trie {
 public class TrieDictionary {
     public Trie trie;
     public TrieDictionary() {
-        this.trie = new Trie(30);
-        String fileName = "dictionary.txt";
+        this.trie = new Trie(70);
+        String fileName = "crosswordDiction.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;

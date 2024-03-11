@@ -8,8 +8,10 @@ public class Tester {
         System.out.println(crossword);
 
 
-        Word[] words = crossword.getWordsAtPos(0,1);
+        Word[] words = crossword.getWordsAtPos(0,3);
         System.out.println(words[0] + "\n" + words[1]);
+        System.out.println((new TrieDictionary()).trie.getHighestMinimumOccurrences(words[0],words[1]));
+
 
 
 
@@ -21,16 +23,10 @@ public class Tester {
         System.out.println(crossword);
         System.out.println((double) duration / 1000000.0 + " ms");
 
-
-
-
-
-
-        /*
         TrieDictionary dictionary = new TrieDictionary();
-        System.out.println(dictionary.trie.getHighestMinimumOccurrences(new Word("o",2),new Word("a",2)));
-        System.out.println(dictionary.trie.getLettersByOccurrence(new Word("a",2)));
+        System.out.println(dictionary.trie.getHighestMinimumOccurrences(new Word("a",2),new Word("",3)));
+        System.out.println(dictionary.trie.getLettersByOccurrence(new Word("",3)));
 
-         */
+
     }
 }

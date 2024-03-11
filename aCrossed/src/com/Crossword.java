@@ -14,6 +14,9 @@ public class Crossword {
 
     private Character[][] crossword;
     private TrieDictionary dictionary;
+    private int iter = 0;
+    private int totalIterations = 0;
+    ArrayList<Point> iterations;
 
     public Crossword(int size) {
         /*
@@ -64,9 +67,8 @@ public class Crossword {
             crossword[10][14].setIsBlocked(true);
 
 
-
             /*
-            for(int i = 0; i < 100; i++) {
+            for(int i = 0; i < 10; i++) {
                 int randX = (int) (Math.random() * 15);
                 int randY = (int) (Math.random() * 15);
                 if(!crossword[randY][randX].getIsBlocked()) {
@@ -76,8 +78,11 @@ public class Crossword {
             }
              */
 
-            //crossword[1][0].setCharacter((char) 104);
-            //crossword[0][1].setCharacter((char) 108);
+
+
+            crossword[1][0].setCharacter((char) 109);
+            crossword[0][1].setCharacter((char) 100);
+
 
             crossword[0][0].setIsBlocked(true);
             crossword[crossword.length - 1][crossword[0].length - 1].setIsBlocked(true);
@@ -87,6 +92,7 @@ public class Crossword {
         }
 
         dictionary = new TrieDictionary();
+        iterations = getIterationSequence();
     }
 
     private ArrayList<Point> getIterationSequence() {
@@ -228,64 +234,65 @@ public class Crossword {
         return words;
     }
 
-    // Generates until success, or failure
-    public boolean generate(boolean debug) {
-        ArrayList<Point> iterations = getIterationSequence();
+    public void iterate(boolean debug) {
+        // In theory, with this algorithm, you will never need the right and down positions
+        // Because it only expands one way
+        if(!crossword[iterations.get(iter).y][iterations.get(iter).x].getIsOccupied()) {
+            Word[] words = getWordsAtPos(iterations.get(iter).x, iterations.get(iter).y);
 
-        // Skip first 3 because they are already set
-        int i = 0;
-        int totalIterations = 0;
+            ArrayList<Trie.CharacterCountPair> highestMinOccurrences =
+                    dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
 
-        while(i < iterations.size()) {
-            // In theory, with this algorithm, you will never need the right and down positions
-            // Because it only expands one way
-            if(!crossword[iterations.get(i).y][iterations.get(i).x].getIsBlocked()) {
-                Word[] words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
-                System.out.println(words[0] + " - " + words[1]);
+            // TODO: fork process if like 100 other occurances or so
 
-                ArrayList<Trie.CharacterCountPair> highestMinOccurrences =
-                        dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
+            try {
+                Character currentCrosswordItem = crossword[iterations.get(iter).y][iterations.get(iter).x];
+                currentCrosswordItem.setCharacter(highestMinOccurrences.get(currentCrosswordItem.getTryNumber()).character);
+            } catch (Exception e) {
+                // If there are  no common word letters, go back until there's one with two
+                Character currentCrosswordItem = crossword[iterations.get(iter).y][iterations.get(iter).x];
+                int letterChoiceLength = 0;
+                iter--;
 
-                try {
-                    Character currentCrosswordItem = crossword[iterations.get(i).y][iterations.get(i).x];
-                    currentCrosswordItem.setCharacter(highestMinOccurrences.get(currentCrosswordItem.getTryNumber()).character);
-                } catch (Exception e) {
-                    // If there are  no common word letters, go back until there's one with two
-                    Character currentCrosswordItem = crossword[iterations.get(i).y][iterations.get(i).x];
-                    int letterChoiceLength = 0;
+                while (true) {
+                    words = getWordsAtPos(iterations.get(iter).x, iterations.get(iter).y);
 
-                    while (true) {
-                        words = getWordsAtPos(iterations.get(i).x, iterations.get(i).y);
-                        //System.out.println(i);
-                        // TODO: work with cases of only one word intersection
-                        if(!crossword[iterations.get(i).y][iterations.get(i).x].getIsBlocked()) {
-                            highestMinOccurrences = dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
-                            currentCrosswordItem = crossword[iterations.get(i).y][iterations.get(i).x];
+                    // TODO: work with cases of only one word intersection
+                    if(!crossword[iterations.get(iter).y][iterations.get(iter).x].getIsBlocked()) {
+                        highestMinOccurrences = dictionary.trie.getHighestMinimumOccurrences(words[0], words[1]);
 
-                            letterChoiceLength = highestMinOccurrences.size();
+                        currentCrosswordItem = crossword[iterations.get(iter).y][iterations.get(iter).x];
+                        int currentOccurancesForTryNum = highestMinOccurrences.get(currentCrosswordItem.getTryNumber() - 1).count;
 
-                            if (letterChoiceLength >= currentCrosswordItem.getTryNumber() + 1) {
-                                i--;
-                                break;
-                            } else {
-                                currentCrosswordItem.clear();
-                                i--;
-                            }
+
+                        letterChoiceLength = highestMinOccurrences.size();
+
+                        if (letterChoiceLength >= currentCrosswordItem.getTryNumber() + 1) { // && currentOccurancesForTryNum > 0
+                            iter--;
+                            currentCrosswordItem.clearOccupation();
+                            break;
                         } else {
-                            i--;
+                            currentCrosswordItem.clear();
+                            iter--;
                         }
+                    } else {
+                        iter--;
                     }
                 }
-
-                if(debug && (totalIterations < 500000000 || totalIterations % 200 == 0))
-                    System.out.println(this);
-
-                totalIterations++;
             }
+            if(debug && (totalIterations < 500 || totalIterations % 200 == 0))
+                System.out.println(this);
 
-            i++;
+            totalIterations++;
         }
 
+        iter++;
+    }
+    // Generates until success, or failure
+    public boolean generate(boolean debug) {
+        while(iter < iterations.size()) {
+            iterate(debug);
+        }
         return true;
     }
 
