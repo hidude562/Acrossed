@@ -11,7 +11,6 @@ class Point {
 }
 
 public class Crossword {
-
     private Character[][] crossword;
     private TrieDictionary dictionary;
     private int iter = 0;
