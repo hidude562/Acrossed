@@ -9,6 +9,12 @@ public class Character {
         this.isBlocked = blocked;
         this.character = (char) 0;
     }
+    public Character(Character character) {
+        this.character = character.getCharacter();
+        this.isOccupied = character.getIsOccupied();
+        this.isBlocked = character.getIsBlocked();
+        this.tryNumber = character.getTryNumber();
+    }
 
     public Character(boolean blocked, char character) {
         this.isOccupied = blocked;
@@ -23,6 +29,9 @@ public class Character {
         this.character = character;
         this.isOccupied = true;
         tryNumber++;
+    }
+    public void setTryNumber(int num) {
+        this.tryNumber = num;
     }
 
     public boolean getIsBlocked() {

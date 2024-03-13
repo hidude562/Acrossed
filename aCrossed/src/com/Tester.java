@@ -4,7 +4,7 @@ public class Tester {
     public static void main(String[] args) {
 
 
-        Crossword crossword = new Crossword(15);
+        Crossword crossword = new Crossword(5);
         System.out.println(crossword);
 
 
@@ -16,17 +16,8 @@ public class Tester {
 
 
         long startTime = System.nanoTime();
-        crossword.generate(true);
+        crossword.run(false, -1);
         long endTime = System.nanoTime();
         long duration = (endTime - startTime);
-
-        System.out.println(crossword);
-        System.out.println((double) duration / 1000000.0 + " ms");
-
-        TrieDictionary dictionary = new TrieDictionary();
-        System.out.println(dictionary.trie.getHighestMinimumOccurrences(new Word("a",2),new Word("",3)));
-        System.out.println(dictionary.trie.getLettersByOccurrence(new Word("",3)));
-
-
     }
 }
