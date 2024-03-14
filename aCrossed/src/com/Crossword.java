@@ -310,7 +310,6 @@ public class Crossword{
     }
 
     public void iterate(boolean debug) {
-        System.out.println("ITER");
         if(iter >= iterations.size()) {
             this.isComplete = true;
             return;
@@ -415,25 +414,50 @@ public class Crossword{
             ArrayList<CompletableFuture<Crossword>> processes = new ArrayList<CompletableFuture<Crossword>>();
             // Fork any processes
             for(Crossword forkedCrossword : crosswordForkCanidates) {
-                System.out.println(this.forkNumber + " Fork number, " + forkedCrossword);
+                //System.out.println(this.forkNumber + " Fork number, " + forkedCrossword);
                 processes.add(CompletableFuture.supplyAsync(() -> {
                     Crossword crosswordForked = forkedCrossword.run(debug, this.highestIter);
                     return crosswordForked;
                 }));
-                System.out.println("RUNNING");
+                // System.out.println("RUNNING");
             }
 
-            for(int i = 0; i < processes.size(); i++) {
-                try {
-                    Crossword potentiallyDoneCrossword = processes.get(i).get();
-                    if(potentiallyDoneCrossword.getIsComplete()) {
-                        return potentiallyDoneCrossword;
+            while(true) {
+                boolean hasProcesses = false;
+                // TODO: sleep for lowest ETA seconds
+                int lowestETA = 100;
+
+                for (int i = 0; i < processes.size(); i++) {
+                    try {
+                        // System.out.println("Getting... " + this.forkNumber);
+                        // System.out.println(processes.get(i).isDone());
+                        if (processes.get(i).isDone()) {
+                            Crossword potentiallyDoneCrossword = processes.get(i).get();
+
+                            if (potentiallyDoneCrossword.getIsComplete()) {
+                                return potentiallyDoneCrossword;
+                            }
+                        } else {
+                            hasProcesses = true;
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    } catch (ExecutionException e) {
+                        throw new RuntimeException(e);
                     }
+                }
+
+                if(!hasProcesses) {
+                    break;
+                }
+
+                // Wait some time before checking again
+                try {
+                    Thread.sleep(lowestETA);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
-                } catch (ExecutionException e) {
-                    throw new RuntimeException(e);
                 }
+
             }
         } else {
             // Quit
@@ -445,7 +469,7 @@ public class Crossword{
         String str = "";
         for(Character[] y : crossword) {
             for(Character x : y) {
-                str+=x.getTryNumber() + " ";
+                str+=x.toString() + " ";
             }
             str+="\n";
         }

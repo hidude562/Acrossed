@@ -7,17 +7,18 @@ public class Tester {
         Crossword crossword = new Crossword(5);
         System.out.println(crossword);
 
-
+        /*
         Word[] words = crossword.getWordsAtPos(0,3);
         System.out.println(words[0] + "\n" + words[1]);
         System.out.println((new TrieDictionary()).trie.getHighestMinimumOccurrences(words[0],words[1]));
-
-
-
+        */
 
         long startTime = System.nanoTime();
-        crossword.run(false, -1);
+        Crossword finished = crossword.run(false, -1);
         long endTime = System.nanoTime();
         long duration = (endTime - startTime);
+
+        System.out.println(finished);
+        System.out.println(duration / 1000000000.0);
     }
 }
