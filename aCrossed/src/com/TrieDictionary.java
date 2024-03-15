@@ -211,7 +211,7 @@ public class TrieDictionary {
     public Trie trie;
     public TrieDictionary() {
         this.trie = new Trie(70);
-        String fileName = "smallestDictionary.txt";
+        String fileName = "crosswordDiction.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;

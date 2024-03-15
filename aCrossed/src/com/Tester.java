@@ -4,7 +4,7 @@ public class Tester {
     public static void main(String[] args) {
 
 
-        Crossword crossword = new Crossword(5);
+        Crossword crossword = new Crossword(7);
         System.out.println(crossword);
 
         /*

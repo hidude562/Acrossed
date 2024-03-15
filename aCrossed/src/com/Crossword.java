@@ -340,7 +340,9 @@ public class Crossword{
                             Character currentForkItem = fork.crossword[iterations.get(iter).y][iterations.get(iter).x];
                             currentForkItem.clear();
                             currentForkItem.setTryNumber(occurancesTry);
-                            this.crosswordForkCanidates.add(fork);
+                            if(this.crosswordForkCanidates.size() < 10) {
+                                this.crosswordForkCanidates.add(fork);
+                            }
                         } else {
                             break;
                         }
@@ -393,7 +395,7 @@ public class Crossword{
         for(int i = 0; i < iterationBatchSize; i++) {
             iterate(debug);
         }
-
+        System.out.println("Batch");
     }
 
     // Generates until success, or failure
@@ -401,10 +403,16 @@ public class Crossword{
         int previousHighestIterInBatch = parentHighestIter;
         runIterationBatch(debug);
         if(highestIter > previousHighestIterInBatch) {
+            if(debug)
+                System.out.println("continuing thread");
+
             while(highestIter != previousHighestIterInBatch) {
                 previousHighestIterInBatch = highestIter;
                 runIterationBatch(debug);
             }
+
+            System.out.println(this);
+
             if(this.isComplete) {
                 // If complete, return this and true value stored in here
                 System.out.println(this);
@@ -431,10 +439,11 @@ public class Crossword{
                     try {
                         // System.out.println("Getting... " + this.forkNumber);
                         // System.out.println(processes.get(i).isDone());
+
                         if (processes.get(i).isDone()) {
                             Crossword potentiallyDoneCrossword = processes.get(i).get();
-
                             if (potentiallyDoneCrossword.getIsComplete()) {
+                                new Crossword(potentiallyDoneCrossword);
                                 return potentiallyDoneCrossword;
                             }
                         } else {
@@ -461,6 +470,8 @@ public class Crossword{
             }
         } else {
             // Quit
+            if(debug)
+                System.out.println("Thread quitting");
         }
         return this;
     }
