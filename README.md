@@ -170,6 +170,6 @@ Worst case: Probably a really long time
 
 ```
 TODO:
-Create 1, maybe more paralel generation processes at places with many probable different outcomes, (for example, the first character) then determine the speed of the rate of completion and go with that and stop other process
+Fix some bugginess, in the asynchronousness
 
 ```
